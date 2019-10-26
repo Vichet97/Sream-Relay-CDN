@@ -70,7 +70,7 @@
 function getUrl()
 {
     $temp = explode("input=", $_SERVER["REQUEST_URI"])[1];
-    return $temp;
+    return rawurldecode($temp);
 }
 function encrypt_decrypt($action, $string)
 {
