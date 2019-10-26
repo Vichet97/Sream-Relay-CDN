@@ -1,0 +1,18 @@
+{
+   "version":2,
+   "regions": ["all"],
+   "public": false,
+   "builds":[
+      {
+         "src":"index.php",
+         "use":"now-php",
+	      "config": {
+	        "composer": false,
+	        "php.ini": {
+	            "memory_limit": "3008M",
+	            "post_max_size": "50M"
+	        }
+	     }
+      }
+   ]
+}

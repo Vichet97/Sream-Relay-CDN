@@ -7,8 +7,5 @@
         "twig/twig": "^2.0",
         "curl/curl":  "^2.2",
         "symfony/twig-bridge": "^3"
-    },
-    "require-dev": {
-        "heroku/heroku-buildpack-php": "*"
     }
 }
