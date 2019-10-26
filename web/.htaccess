@@ -6,4 +6,5 @@ ErrorDocument 404 /index.php
 
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^ index.php [QSA,L]
 RewriteRule !.*\.php$ %{REQUEST_FILENAME}.php [QSA,L]
