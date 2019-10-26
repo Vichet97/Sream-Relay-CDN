@@ -5,7 +5,7 @@
         "silex/silex": "^2.0.4",
         "monolog/monolog": "^1.22",
         "twig/twig": "^2.0",
-        "curl/curl":  "*",
+        "curl/curl":  "^2.2",
         "symfony/twig-bridge": "^3"
     },
     "require-dev": {
