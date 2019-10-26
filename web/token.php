@@ -4,7 +4,7 @@
 // ------------------------ htaccess config ---------------------------
 
 // # HTID:11167456: DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES BELOW
-// php_value display_errors 1
+
 // # DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES ABOVE HTID:11167456:
 
 // ErrorDocument 404 /index.php
