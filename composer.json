@@ -1,0 +1,14 @@
+{
+    "name": "composer/example",
+    "require": {
+        "php": ">=7.2.14",
+        "silex/silex": "^2.0.4",
+        "monolog/monolog": "^1.22",
+        "twig/twig": "^2.0",
+        "curl/curl":  "*",
+        "symfony/twig-bridge": "^3"
+    },
+    "require-dev": {
+        "heroku/heroku-buildpack-php": "*"
+    }
+}
