@@ -105,6 +105,11 @@ function getUrlData($url,$returnheader = false,$return = true ,$useragent=false,
 {
 
 
+    $stream = substr( str_replace(' ', '', $url) , 0, 4 ) === "http" ? explode('://', $url, 2)[1] : $url;
+    $proxy = 'https://as.mykhcdn.workers.dev/cdn/';//encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
+    $url = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+    // echo $url;exit;
+
     if(getParam("useragent")!=false)
     {
         $useragent = rawurldecode(encrypt_decrypt('decrypt',getParam("useragent")));
@@ -674,7 +679,7 @@ elseif(preg_match("[\.ts]",$url))
 
         $stream = substr( str_replace(' ', '', $old) , 0, 4 ) === "http" ? explode('://', $old, 2)[1] : $old;
         $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-        $url = $proxy."".stream_encrypt_decrypt('encrypt',rawurldecode($stream));   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+        $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream));   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
         header("Location: $url",true, 302);
     }
     else
@@ -933,17 +938,10 @@ else
                 }
                 elseif(getParam("p")!=false)
                 {
-                    $stream = $old;
-                    $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //proxy.maintenis.com/index.php?hl=8&q=
-                    if(preg_match("[q=cdn]", $proxy))
-                    {
-                        $proxy = str_replace("q=cdn", "q=", $proxy);
-                        get_http_response_code($url);  //Alert
-                        $stream = $url;
-                    }
-                    
-                    $url = $proxy.urlencode(str_replace("=","",base64_encode(rawurldecode("$stream")))); //proxy.maintenis.com/index.php?hl=8&q=hgfgdertfgddt
-                    $url = "https://d2dbd9ow79oetv.cloudfront.net/$url";
+
+                    $stream = substr( str_replace(' ', '', $old) , 0, 4 ) === "http" ? explode('://', $old, 2)[1] : $old;
+                    $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
+                    $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream));   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
                     header("Location: $url",true, 302);
                 }
                 else
@@ -963,7 +961,7 @@ else
                     }
                     else
                     {
-                        $url = urlencode(str_replace("=","",base64_encode(rawurldecode("$url"))));
+                        $url = urlencode(str_replace("=","",base64_encode(rawurldecode("$url")))) ;
                         $url = "https://d2dbd9ow79oetv.cloudfront.net/proxy.maintenis.com/index.php?q=$url&hl=8";//2e9, e9, e0
                         header("Location: $url",true, 302);
                     }
