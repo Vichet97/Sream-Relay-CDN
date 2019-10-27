@@ -619,6 +619,8 @@ if(getParam('q')) {
     $getdata = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
 }
 
+echo $getdata;exit;
+
 $id = substr($url, strrpos($url, '/') + 1);
 $id = preg_replace('#\?[^?]*$#', '', $id);
 $cdn = getParam("cdn");
@@ -938,10 +940,10 @@ else
                 }
                 elseif(getParam("p")!=false)
                 {
-
+                    $suffix = strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ? "" : "?key=".@stream_encrypt_decrypt('encrypt', getParam("key"));
                     $stream = substr( str_replace(' ', '', $old) , 0, 4 ) === "http" ? explode('://', $old, 2)[1] : $old;
                     $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-                    $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream));   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+                    $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream)).$suffix;   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
                     header("Location: $url",true, 302);
                 }
                 else
