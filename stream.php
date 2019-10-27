@@ -105,9 +105,9 @@ function getUrlData($url,$returnheader = false,$return = true ,$useragent=false,
 {
 
 
-    $stream = substr( str_replace(' ', '', $url) , 0, 4 ) === "http" ? explode('://', $url, 2)[1] : $url;
-    $proxy = 'https://as.mykhcdn.workers.dev/cdn/';//encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-    $url = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+    // $stream = substr( str_replace(' ', '', $url) , 0, 4 ) === "http" ? explode('://', $url, 2)[1] : $url;
+    // $proxy = 'https://as.mykhcdn.workers.dev/cdn/';//encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
+    // $url = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
     echo $url;exit;
 
     if(getParam("useragent")!=false)
