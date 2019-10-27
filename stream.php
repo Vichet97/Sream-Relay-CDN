@@ -10,7 +10,8 @@
 error_reporting(E_ALL & ~E_WARNING);
 
 
-if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) )
+$paramP = ['tree','false'];
+if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( !in_array(getParam("p"), $paramP) ||  strlen(@encrypt_decrypt('decrypt', getParam("p"))) < 5 ) )
 {
     Show404Error();
 }
@@ -66,7 +67,7 @@ function getFileSize($file_path) {
 function getUrlData($url,$returnheader = false,$return = true ,$useragent=false,$referer=false,$headers=false,$proxy = false)
 {
 
-    
+
     if(getParam("useragent")!=false)
     {
         $useragent = rawurldecode(encrypt_decrypt('decrypt',getParam("useragent")));
@@ -617,7 +618,7 @@ elseif(preg_match("[\.ts]",$url))
     $old = $url;
 
     $url = "http://d2dbd9ow79oetv.cloudfront.net/$url";
-    if(getParam("p")=="true")
+    if(getParam("p")=="tree")
     {
         header("Location: $url",true, 302);
     }
@@ -886,7 +887,7 @@ else
                 $url = "http://d2dbd9ow79oetv.cloudfront.net/$url";
 
 
-                if(getParam("p")=="true")
+                if(getParam("p")=="tree")
                 {
                     header("Location: $url",true, 302);
                 }
