@@ -103,7 +103,7 @@ function getFileSize($file_path) {
 }
 function getUrlData($url,$returnheader = false,$return = true ,$useragent=false,$referer=false,$headers=false,$proxy = false)
 {
-
+    echo $url; exit;
     if(getParam("useragent")!=false)
     {
         $useragent = rawurldecode(encrypt_decrypt('decrypt',getParam("useragent")));
