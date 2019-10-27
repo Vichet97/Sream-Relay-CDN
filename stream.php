@@ -671,16 +671,8 @@ elseif(preg_match("[\.ts]",$url))
     elseif(getParam("p")!=false)
     {
         $stream = $old;
-        $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //proxy.maintenis.com/index.php?hl=8&q=
-        if(preg_match("[q=cdn]", $proxy))
-        {
-            $proxy = str_replace("q=cdn", "q=", $proxy);
-            get_http_response_code($url);  //Alert
-            $stream = $url;
-        }
-        
-        $url = $proxy.urlencode(str_replace("=","",base64_encode(rawurldecode("$stream")))); //proxy.maintenis.com/index.php?hl=8&q=hgfgdertfgddt
-        $url = "https://d2dbd9ow79oetv.cloudfront.net/$url";
+        $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
+        $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode("$stream"));
         header("Location: $url",true, 302);
     }
     else
