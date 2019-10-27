@@ -619,7 +619,6 @@ if(getParam('q')) {
     $getdata = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
 }
 
-echo $getdata;exit;
 
 $id = substr($url, strrpos($url, '/') + 1);
 $id = preg_replace('#\?[^?]*$#', '', $id);
