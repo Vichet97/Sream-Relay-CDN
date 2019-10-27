@@ -9,9 +9,8 @@
             //     http://iptv/stream/b0IxZmxxV2kvRzUyVU82ck9vQzhsQzUxTTBUaXNNL3hsNUUyc0dVZm1Ed3ByQjFVVzNQQkczczlKTms1NUZMLw==/playlist.m3u8?p=true&authenticationtoken=admin
 error_reporting(E_ALL & ~E_WARNING);
 
-
 $paramP = ['tree','false']; 
-if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( in_array(getParam("p"), $paramP) ? false : strlen(@encrypt_decrypt('decrypt', getParam("p"))) < 5 ? true : false ) )
+if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( in_array(getParam("p"), $paramP) ? false : strlen(@encrypt_decrypt('decrypt', getParam("p"))) < 5 ? true : false ) || ( getParam('q') != false && strlen(@encrypt_decrypt('decrypt', getParam("q"))) < 5 ) || ( getParam('key') != false && strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ) )
 {
     Show404Error();
 }
@@ -44,13 +43,13 @@ function stream_encrypt_decrypt($action, $string)
   if ($action == 'encrypt')
   { 
     $output = $encryptedMessage = openssl_encrypt($textToEncrypt, $encryptionMethod, $secret,0,$iv);
-    $output = str_replace("+","@",$output);
+    $output = str_replace('/', '$', str_replace("+","@",$output));
   }
   else
   {
     if ($action == 'decrypt')
     {
-      $string = str_replace("@","+",$textToEncrypt);
+      $string = str_replace('$', '/', str_replace('@', '+', $textToEncrypt));
       $output = openssl_decrypt($string, $encryptionMethod, $secret,0,$iv);
     }
   }
@@ -612,10 +611,13 @@ function get_http_response_code($domain1) {
 }
 
 $url = getUrl();
+$getdata = $url;
 
-$stream = substr( str_replace(' ', '', $url) , 0, 4 ) === "http" ? explode('://', $url, 2)[1] : $url;
-$proxy = 'https://as.mykhcdn.workers.dev/cdn/';//encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-$getdata = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+if(getParam('q')) {
+    $stream = substr( str_replace(' ', '', $url) , 0, 4 ) === "http" ? explode('://', $url, 2)[1] : $url;
+    $proxy = encrypt_decrypt('decrypt',getParam("q")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
+    $getdata = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+}
 
 $id = substr($url, strrpos($url, '/') + 1);
 $id = preg_replace('#\?[^?]*$#', '', $id);
@@ -673,10 +675,10 @@ elseif(preg_match("[\.ts]",$url))
     }
     elseif(getParam("p")!=false)
     {
-
+        $suffix = strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ? "" : "?key=".@stream_encrypt_decrypt('encrypt', getParam("key"));
         $stream = substr( str_replace(' ', '', $old) , 0, 4 ) === "http" ? explode('://', $old, 2)[1] : $old;
         $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-        $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream));   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+        $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream)).$suffix;   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
         header("Location: $url",true, 302);
     }
     else
