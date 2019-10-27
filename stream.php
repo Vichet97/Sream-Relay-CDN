@@ -45,12 +45,14 @@ function stream_encrypt_decrypt($action, $string)
   { 
     $output = $encryptedMessage = openssl_encrypt($textToEncrypt, $encryptionMethod, $secret,0,$iv);
     $output = str_replace("+","@",$output);
+    $output = str_replace("/","$",$output);
   }
   else
   {
     if ($action == 'decrypt')
     {
-      $string = str_replace("@","+",$textToEncrypt);
+      $string = str_replace("$","/",$textToEncrypt);
+      $string = str_replace("@","+",$string);
       $output = openssl_decrypt($string, $encryptionMethod, $secret,0,$iv);
     }
   }
@@ -674,7 +676,7 @@ elseif(preg_match("[\.ts]",$url))
 
         $stream = substr( str_replace(' ', '', $old) , 0, 4 ) === "http" ? explode('://', $old, 2)[1] : $old;
         $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-        $url = $proxy.rawurldecode("$stream");    https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+        $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream));   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
         header("Location: $url",true, 302);
     }
     else

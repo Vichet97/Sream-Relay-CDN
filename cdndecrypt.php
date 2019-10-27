@@ -37,8 +37,7 @@ function curPageURL() {
 }
 // http://103.47.132.164/PLTV/88888888/224/3221227035/index.m3u8
 // echo "http://api.ipify.org?authenticationtoken="."\n<br>";
-
-$decryptedMessage = openssl_decrypt(getUrl(), $encryptionMethod, $secret,0,$iv);
+$decryptedMessage = openssl_decrypt(str_replace('@', '+', getUrl()) , $encryptionMethod, $secret,0,$iv);
 
 echo "$decryptedMessage";
 
