@@ -45,14 +45,12 @@ function stream_encrypt_decrypt($action, $string)
   { 
     $output = $encryptedMessage = openssl_encrypt($textToEncrypt, $encryptionMethod, $secret,0,$iv);
     $output = str_replace("+","@",$output);
-    $output = str_replace("/","$",$output);
   }
   else
   {
     if ($action == 'decrypt')
     {
-      $string = str_replace("$","/",$textToEncrypt);
-      $string = str_replace("@","+",$string);
+      $string = str_replace("@","+",$textToEncrypt);
       $output = openssl_decrypt($string, $encryptionMethod, $secret,0,$iv);
     }
   }
