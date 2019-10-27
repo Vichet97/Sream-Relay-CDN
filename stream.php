@@ -66,7 +66,7 @@ function getFileSize($file_path) {
 function getUrlData($url,$returnheader = false,$return = true ,$useragent=false,$referer=false,$headers=false,$proxy = false)
 {
 
-    $url = "https://yacdn.org/proxy/$url"
+    $url = "http://159.65.143.20:8081/index.php/$url"
     if(getParam("useragent")!=false)
     {
         $useragent = rawurldecode(encrypt_decrypt('decrypt',getParam("useragent")));
