@@ -653,7 +653,7 @@ elseif(preg_match("[\.ts]",$url))
     header("Content-Type: $type");
     $old = $url;
 
-    $url = "http://d2dbd9ow79oetv.cloudfront.net/$url";
+    $url = "https://d2dbd9ow79oetv.cloudfront.net/$url";
     if(getParam("p")=="tree")
     {
         header("Location: $url",true, 302);
@@ -670,7 +670,7 @@ elseif(preg_match("[\.ts]",$url))
     }
     elseif(getParam("p")!=false)
     {
-        $stream = $old;
+        $stream = $old.include('http://') ? explode('://', $old, 2)[1] : $old;
         $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
         $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode("$stream"));    https://as.mykhcdn.workers.dev/cdn/:encoded_uri
         header("Location: $url",true, 302);
@@ -912,7 +912,7 @@ else
 
                 $url = $url.$id;
                 $old = $url;
-                $url = "http://d2dbd9ow79oetv.cloudfront.net/$url";
+                $url = "https://d2dbd9ow79oetv.cloudfront.net/$url";
 
 
                 if(getParam("p")=="tree")
