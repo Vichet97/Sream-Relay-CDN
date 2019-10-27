@@ -330,6 +330,14 @@ function checkPlaylist($playlist,$domainurl)
                     {
                         $item = $item."&p=".getParam("p");
                     }
+                    if(getParam("q") != false)
+                    {
+                        $item = $item."&q=".getParam("q");
+                    }
+                    if(getParam("key") != false)
+                    {
+                        $item = $item."&key=".getParam("key");
+                    }
 
                 } 
 
@@ -413,7 +421,14 @@ function checkPlaylist($playlist,$domainurl)
                 {
                     $item = $item."&p=".getParam("p");
                 }    
-                 
+                if(getParam("q") != false)
+                {
+                    $item = $item."&q=".getParam("q");
+                }
+                if(getParam("key") != false)
+                {
+                    $item = $item."&key=".getParam("key");
+                }
             }
             $data .= $item."\n";
         }
