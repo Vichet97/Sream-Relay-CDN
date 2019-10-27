@@ -10,9 +10,8 @@
 error_reporting(E_ALL & ~E_WARNING);
 
 
-$paramP = ['tree','false'];
-echo (time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) ); exit;
-if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( !in_array(getParam("p"), $paramP) ||  strlen(@encrypt_decrypt('decrypt', getParam("p"))) < 5 ) )
+$paramP = ['tree','false']; 
+if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( in_array(getParam("p"), $paramP) ? false : strlen(@encrypt_decrypt('decrypt', getParam("p"))) < 5 ? true : false ) )
 {
     Show404Error();
 }
