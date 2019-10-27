@@ -80,11 +80,13 @@ function encrypt_decrypt($action, $string)
   { 
     $output = $encryptedMessage = openssl_encrypt($textToEncrypt, $encryptionMethod, $secret,0,$iv);
     $output = str_replace("/","-_.",$output);
+    $output = str_replace("+","__",$output);
   }
   else
   {
     if ($action == 'decrypt')
     {
+      $string = str_replace("__","+",$textToEncrypt);
       $string = str_replace("-_.","/",$textToEncrypt);
       $output = openssl_decrypt($string, $encryptionMethod, $secret,0,$iv);
     }
