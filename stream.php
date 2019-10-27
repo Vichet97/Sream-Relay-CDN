@@ -11,16 +11,53 @@ error_reporting(E_ALL & ~E_WARNING);
 
 
 $paramP = ['tree','false'];
+echo ( !in_array(getParam("p"), $paramP) ||  strlen(@encrypt_decrypt('decrypt', getParam("p"))) < 5 ); exit;
 if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( !in_array(getParam("p"), $paramP) ||  strlen(@encrypt_decrypt('decrypt', getParam("p"))) < 5 ) )
 {
     Show404Error();
 }
+
 function Show404Error()
 {
     header("HTTP/1.1 401 Unauthorized");
     echo "<h1>Unauthorized</h1>";
     echo "The page that you have requested could not be proceed.";
     exit();
+}
+
+
+function stream_encrypt_decrypt($action, $string)
+{
+
+
+  $output = false;
+ 
+  //------------------ Encryption Setting --------------------
+
+    date_default_timezone_set('UTC');
+    $textToEncrypt = $string;
+    $encryptionMethod = "AES-256-CBC";
+    $secret = "im72charPasswordofdInitVectorStm"; //must be 32 char length
+    $iv = substr($secret, 0, 16);
+
+
+    //------------------End Encryption --------------------
+ 
+  if ($action == 'encrypt')
+  { 
+    $output = $encryptedMessage = openssl_encrypt($textToEncrypt, $encryptionMethod, $secret,0,$iv);
+    // $output = str_replace("/","-_.",$output);
+  }
+  else
+  {
+    if ($action == 'decrypt')
+    {
+      // $string = str_replace("-_.","/",$textToEncrypt);
+      $output = openssl_decrypt($string, $encryptionMethod, $secret,0,$iv);
+    }
+  }
+ 
+  return $output;
 }
 
 function encrypt_decrypt($action, $string)
