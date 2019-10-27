@@ -103,7 +103,6 @@ function getFileSize($file_path) {
 }
 function getUrlData($url,$returnheader = false,$return = true ,$useragent=false,$referer=false,$headers=false,$proxy = false)
 {
-    echo $url; exit;
     if(getParam("useragent")!=false)
     {
         $useragent = rawurldecode(encrypt_decrypt('decrypt',getParam("useragent")));
@@ -616,9 +615,7 @@ $url = getUrl();
 
 $stream = substr( str_replace(' ', '', $url) , 0, 4 ) === "http" ? explode('://', $url, 2)[1] : $url;
 $proxy = 'https://as.mykhcdn.workers.dev/cdn/';//encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-$url = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
-
-echo getUrlData($url);exit;
+$getdata = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
 
 $id = substr($url, strrpos($url, '/') + 1);
 $id = preg_replace('#\?[^?]*$#', '', $id);
@@ -742,7 +739,7 @@ else
 
     
     if(getParam("referer") || getParam("useragent")){
-        $file_info = getUrlData($url,true);
+        $file_info = getUrlData($getdata,true);
     }else{
         $file_info = @get_headers($url,1);
     }
@@ -858,7 +855,7 @@ if(preg_match("[mpegurl]", $type) || preg_match("[\.m3u8]",$url))
     else
     {
 
-        $playlist = getUrlData($url);
+        $playlist = getUrlData($getdata);
       
     }
 
@@ -874,7 +871,7 @@ else
     if(preg_match("[text|html|json|plain]", $type))
     {
 
-		echo getUrlData($url);
+		echo getUrlData($getdata);
     }
     else
     {
@@ -887,9 +884,10 @@ else
             {
                 readfile($url);
             }
+            else
             {
 
-                getUrlData($url,false,$return=false);
+                getUrlData($getdata,false,$return=false);
                 
             }
 
