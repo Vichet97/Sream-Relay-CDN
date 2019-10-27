@@ -203,7 +203,7 @@ function getPlaylist($cdn,$url)
     if(!file_exists($filename))
     {
         flush();               // - Make sure all buffers are flushed
-        ob_flush();            // - Make sure all buffers are flushed
+        //ob_flush();            // - Make sure all buffers are flushed
         exit;                  // - Prevent any more output from messing up the redirect
     }
     
@@ -540,7 +540,7 @@ if($cdn != false && preg_match("[chunklist_$cdn]",$url))
 
         http_response_code(404);
         flush();               // - Make sure all buffers are flushed
-        ob_flush();            // - Make sure all buffers are flushed
+        //ob_flush();            // - Make sure all buffers are flushed
         exit;                  // - Prevent any more output from messing up the redirect
     }
     
@@ -632,8 +632,10 @@ else
     
 }
 
-header('Cache-Control: must-revalidate');
-header('Expires: 0');
+if(strtolower($type).include('video')){
+    header("Cache-Control: s-maxage=1, stale-while-revalidate");
+}
+
 header("Access-Control-Allow-Origin: *");
 
 if($length != 0 )
@@ -678,7 +680,7 @@ if(preg_match("[mpegurl]", $type) || preg_match("[\.m3u8]",$url))
 
     echo checkPlaylist($playlist,$url);
     flush();               // - Make sure all buffers are flushed
-    ob_flush();            // - Make sure all buffers are flushed
+    //ob_flush();            // - Make sure all buffers are flushed
     exit;                  // - Prevent any more output from messing up the redirect
 
 }
@@ -742,7 +744,7 @@ else
     }
 }
 flush();               // - Make sure all buffers are flushed
-ob_flush();            // - Make sure all buffers are flushed
+//ob_flush();            // - Make sure all buffers are flushed
 exit;                  // - Prevent any more output from messing up the redirect
 
 ?>

@@ -232,7 +232,7 @@ function getPlaylist($cdn,$url)
     if(!file_exists($filename))
     {
         flush();               // - Make sure all buffers are flushed
-        ob_flush();            // - Make sure all buffers are flushed
+        //ob_flush();            // - Make sure all buffers are flushed
         exit;                  // - Prevent any more output from messing up the redirect
     }
     
@@ -606,7 +606,7 @@ if(preg_match("[ts\?authenticationtoken]",$ts))
     header("Location: $url",true, 302);
 
     flush();               // - Make sure all buffers are flushed
-    ob_flush();            // - Make sure all buffers are flushed
+    //ob_flush();            // - Make sure all buffers are flushed
     exit;                  // - Prevent any more output from messing up the redirect
 }
 elseif(preg_match("[\.ts]",$url))
@@ -628,7 +628,7 @@ elseif(preg_match("[\.ts]",$url))
             $script = basename(__FILE__);
         }
         $head = explode($script,curPageURL())[0];
-        $stream = $head.$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
+        $stream = "/".$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
         header("Location: $stream",true, 302);
     }
     elseif(getParam("p")!=false)
@@ -657,7 +657,7 @@ elseif(preg_match("[\.ts]",$url))
                 $script = basename(__FILE__);
             }
             $head = explode($script,curPageURL())[0];
-            $stream = $head.$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
+            $stream = "/".$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
             header("Location: $stream",true, 302);
 
         }
@@ -670,7 +670,7 @@ elseif(preg_match("[\.ts]",$url))
     }
 
     flush();               // - Make sure all buffers are flushed
-    ob_flush();            // - Make sure all buffers are flushed
+    //ob_flush();            // - Make sure all buffers are flushed
     exit;                  // - Prevent any more output from messing up the redirect
 }
 
@@ -690,7 +690,7 @@ if($cdn != false && preg_match("[chunklist_$cdn]",$url))
     {
         http_response_code(404);
         flush();               // - Make sure all buffers are flushed
-        ob_flush();            // - Make sure all buffers are flushed
+        //ob_flush();            // - Make sure all buffers are flushed
         exit;                  // - Prevent any more output from messing up the redirect
     }
     
@@ -782,8 +782,10 @@ else
     
 }
 
-header('Cache-Control: must-revalidate');
-header('Expires: 0');
+if(strtolower($type).include('video')){
+    header("Cache-Control: s-maxage=1, stale-while-revalidate");
+}
+
 header("Access-Control-Allow-Origin: *");
 
 if($length != 0 )
@@ -826,7 +828,7 @@ if(preg_match("[mpegurl]", $type) || preg_match("[\.m3u8]",$url))
 
     echo checkPlaylist($playlist,$url);
     flush();               // - Make sure all buffers are flushed
-    ob_flush();            // - Make sure all buffers are flushed
+    //ob_flush();            // - Make sure all buffers are flushed
     exit;                  // - Prevent any more output from messing up the redirect
 
 }
@@ -895,8 +897,8 @@ else
                         $script = basename(__FILE__);
                     }
                     $head = explode($script,curPageURL())[0];
-                    $stream = $head.$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
-                    header("Location: $stream",true, 302);
+                    $stream = "/".$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
+                    header("Location: $old",true, 302);
                 }
                 elseif(getParam("p")!=false)
                 {
@@ -924,7 +926,7 @@ else
                             $script = basename(__FILE__);
                         }
                         $head = explode($script,curPageURL())[0];
-                        $stream = $head.$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
+                        $stream = "/".$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
                         header("Location: $stream",true, 302);
 
                     }
@@ -945,7 +947,7 @@ else
     }
 }
 flush();               // - Make sure all buffers are flushed
-ob_flush();            // - Make sure all buffers are flushed
+//ob_flush();            // - Make sure all buffers are flushed
 exit;                  // - Prevent any more output from messing up the redirect
 
 ?>
