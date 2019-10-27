@@ -104,12 +104,6 @@ function getFileSize($file_path) {
 function getUrlData($url,$returnheader = false,$return = true ,$useragent=false,$referer=false,$headers=false,$proxy = false)
 {
 
-
-    // $stream = substr( str_replace(' ', '', $url) , 0, 4 ) === "http" ? explode('://', $url, 2)[1] : $url;
-    // $proxy = 'https://as.mykhcdn.workers.dev/cdn/';//encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-    // $url = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
-    echo $url;exit;
-
     if(getParam("useragent")!=false)
     {
         $useragent = rawurldecode(encrypt_decrypt('decrypt',getParam("useragent")));
@@ -619,6 +613,11 @@ function get_http_response_code($domain1) {
 }
 
 $url = getUrl();
+
+$stream = substr( str_replace(' ', '', $url) , 0, 4 ) === "http" ? explode('://', $url, 2)[1] : $url;
+$proxy = 'https://as.mykhcdn.workers.dev/cdn/';//encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
+$url = $proxy.rawurldecode($stream);   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+echo $url;exit;
 
 $id = substr($url, strrpos($url, '/') + 1);
 $id = preg_replace('#\?[^?]*$#', '', $id);
