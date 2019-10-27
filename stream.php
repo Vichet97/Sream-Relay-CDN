@@ -629,7 +629,7 @@ elseif(preg_match("[\.ts]",$url))
         }
         $head = explode($script,curPageURL())[0];
         $stream = "/".$script."/".encrypt_decrypt('encrypt',$old).".ts?authenticationtoken=".getParam("authenticationtoken");
-        header("Location: $stream",true, 302);
+        header("Location: $old",true, 302);
     }
     elseif(getParam("p")!=false)
     {
