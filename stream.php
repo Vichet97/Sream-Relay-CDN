@@ -672,8 +672,9 @@ elseif(preg_match("[\.ts]",$url))
     }
     elseif(getParam("p")!=false)
     {
-        echo $old;exit;
+
         $stream = $old.include('http://') ? explode('://', $old, 2)[1] : $old;
+        echo $stream;exit;
         $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
         $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode("$stream"));    https://as.mykhcdn.workers.dev/cdn/:encoded_uri
         header("Location: $url",true, 302);
