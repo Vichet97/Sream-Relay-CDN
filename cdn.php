@@ -21,12 +21,23 @@
 //          http://localhost/cdn(.php)/cache=ChannelName&useragent=Mozilla/5.0 (Linux; U; Android 4.0; en-us; GT-I9300 Build/IMM76D)&referer=http://google.com&headers="X-Forwarder: apple.com","Cache: none"&proxy=66.96.200.39:80&transcode=-c copy -level 3.1/iduri=http://example.com/playlist.m3u8
 
 error_reporting(E_ALL & ~E_WARNING);
+if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( getParam('key') != false && strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ) )
+{
+    Show404Error();
+}
 function ago($time) { 
     return (int)$timediff=time()-$time; 
 }
 function getFileSize($file_path) {
     clearstatcache();
     return filesize($file_path);
+}
+function Show404Error()
+{
+    header("HTTP/1.1 401 Unauthorized");
+    echo "<h1>Unauthorized</h1>";
+    echo "The page that you have requested could not be proceed.";
+    exit();
 }
 function getUrlData($url,$returnheader = false,$return = true ,$useragent=false,$referer=false,$headers=false,$proxy = false)
 {
@@ -217,6 +228,7 @@ function getPlaylist($cdn,$url)
 }
 function checkPlaylist($playlist,$domainurl)
 {
+    
     $data = $playlist;
     $newstreamurl = false;
 
@@ -238,18 +250,47 @@ function checkPlaylist($playlist,$domainurl)
         }
         elseif(!preg_match("[#]", $item))
         {
-            if(strlen($item) >0 && preg_match("[/]",$item[0]))
+            if(strlen($item) >0 )
             {
-               $protocol = "http://";
-               if(preg_match("[https://]", $item))
-               {
-                    $protocol = "https://";
-               }
+                if(preg_match("[/]",$item[0]))
+                {
+                    $protocol = "http://";
+                    if(preg_match("[https://]", $item))
+                    {
+                            $protocol = "https://";
+                    }
 
-               $item = $protocol.explode("/", $domainurl)[2].$item;
-            } 
+                    $item = $protocol.explode("/", $domainurl)[2].$item;
+                }
+                if(!preg_match("[h]",$item[0]) && !preg_match("[t]",$item[1])&&!preg_match("[t]",$item[2]) && !preg_match("[p]",$item[3]))
+                {
+                    if(preg_match("[\?]",$item) )
+                    {
+                        $item = trim(preg_replace('/\s+/', ' ', $item))."&authenticationtoken=".getParam("authenticationtoken");
+                    }
+                    else
+                    {
+                        $item = trim(preg_replace('/\s+/', ' ', $item))."?authenticationtoken=".getParam("authenticationtoken");
+                    }
+                    if(getParam("p") != false)
+                    {
+                        $item = $item."&p=".getParam("p");
+                    }
+                    if(getParam("q") != false)
+                    {
+                        $item = $item."&q=".getParam("q");
+                    }
+                    if(getParam("key") != false)
+                    {
+                        $item = $item."&key=".getParam("key");
+                    }
+
+                } 
+
+            }
+
         }
-
+        
         $data .= $item."\n";
     }
 
@@ -278,14 +319,19 @@ function checkPlaylist($playlist,$domainurl)
         $data = "";
         $prefix = getUrl();
         foreach($array as $item){
-            if(!preg_match("[#]", $item))
+            if( strlen($item) >0 && !preg_match("[#]", $item))
             {
                 if(preg_match("[http]",$item))
                 {
+                    $script=str_replace(".php","",basename(__FILE__));
+                    if(preg_match("[\.php]",$_SERVER["REQUEST_URI"]))
+                    {
+                        $script = basename(__FILE__);
+                    }
                     $url = preg_replace('#[^/]*$#', '', curPageURL());
+                    $url = explode($script,$url)[0].$script."/";
                     $item = trim(preg_replace('/\s+/', ' ', $item));
-
-                    $url = explode("iduri=",$url)[0]."iduri=";
+                    
                     if(preg_match("[\.m3u8|\.mdp]", $item))
                     {
                         $tmpname = explode("/", $item);
@@ -305,11 +351,30 @@ function checkPlaylist($playlist,$domainurl)
                         $item = encrypt_decrypt('encrypt',$item);
                     }
                     
-                    
+                   
                     $item = $url.$item;
+                    
                 }
-                    
-                    
+                if(preg_match("[\?]",$item) )
+                {
+                $item = trim(preg_replace('/\s+/', ' ', $item))."&authenticationtoken=".getParam("authenticationtoken");
+                }
+                else
+                {
+                    $item = trim(preg_replace('/\s+/', ' ', $item))."?authenticationtoken=".getParam("authenticationtoken");
+                }
+                if(getParam("p") != false)
+                {
+                    $item = $item."&p=".getParam("p");
+                }    
+                if(getParam("q") != false)
+                {
+                    $item = $item."&q=".getParam("q");
+                }
+                if(getParam("key") != false)
+                {
+                    $item = $item."&key=".getParam("key");
+                }
             }
             $data .= $item."\n";
         }
