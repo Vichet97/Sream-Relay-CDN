@@ -33,16 +33,16 @@ class NativeSessionStorageTest extends TestCase
 {
     private $savePath;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->iniSet('session.save_handler', 'files');
-        $this->iniSet('session.save_path', $this->savePath = sys_get_temp_dir().'/sf2test');
+        $this->iniSet('session.save_path', $this->savePath = sys_get_temp_dir().'/sftest');
         if (!is_dir($this->savePath)) {
             mkdir($this->savePath);
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         session_write_close();
         array_map('unlink', glob($this->savePath.'/*'));
@@ -167,6 +167,10 @@ class NativeSessionStorageTest extends TestCase
             'cookie_httponly' => false,
         ];
 
+        if (\PHP_VERSION_ID >= 70300) {
+            $options['cookie_samesite'] = 'lax';
+        }
+
         $this->getStorage($options);
         $temp = session_get_cookie_params();
         $gco = [];
@@ -174,8 +178,6 @@ class NativeSessionStorageTest extends TestCase
         foreach ($temp as $key => $value) {
             $gco['cookie_'.$key] = $value;
         }
-
-        unset($gco['cookie_samesite']);
 
         $this->assertEquals($options, $gco);
     }
