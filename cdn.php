@@ -21,7 +21,8 @@
 //          http://localhost/cdn(.php)/cache=ChannelName&useragent=Mozilla/5.0 (Linux; U; Android 4.0; en-us; GT-I9300 Build/IMM76D)&referer=http://google.com&headers="X-Forwarder: apple.com","Cache: none"&proxy=66.96.200.39:80&transcode=-c copy -level 3.1/iduri=http://example.com/playlist.m3u8
 
 error_reporting(E_ALL & ~E_WARNING);
-if(time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( getParam('key') != false && strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ) )
+
+if( strpos($_SERVER["REQUEST_URI"], '.ts?') === false && time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( getParam('key') != false && strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ) )
 {
     Show404Error();
 }
@@ -285,6 +286,12 @@ function checkPlaylist($playlist,$domainurl)
                         $item = $item."&key=".getParam("key");
                     }
 
+                    if (strpos($item, '.ts?authenticationtoken=') !== false) {
+                        $item = $item.explode('?authenticationtoken',$item)[0];
+                    } elseif (strpos($item, '.ts?') !== false) {
+                        $item = $item.explode('&authenticationtoken',$item)[0];
+                    }
+
                 } 
 
             }
@@ -357,7 +364,7 @@ function checkPlaylist($playlist,$domainurl)
                 }
                 if(preg_match("[\?]",$item) )
                 {
-                $item = trim(preg_replace('/\s+/', ' ', $item))."&authenticationtoken=".getParam("authenticationtoken");
+                    $item = trim(preg_replace('/\s+/', ' ', $item))."&authenticationtoken=".getParam("authenticationtoken");
                 }
                 else
                 {
@@ -374,6 +381,12 @@ function checkPlaylist($playlist,$domainurl)
                 if(getParam("key") != false)
                 {
                     $item = $item."&key=".getParam("key");
+                }
+
+                if (strpos($item, '.ts?authenticationtoken=') !== false) {
+                    $item = $item.explode('?authenticationtoken',$item)[0];
+                } elseif (strpos($item, '.ts?') !== false) {
+                    $item = $item.explode('&authenticationtoken',$item)[0];
                 }
             }
             $data .= $item."\n";
@@ -480,6 +493,7 @@ function encrypt_decrypt($action, $string)
  
   return $output;
 }
+
 function getChunkURI($lastSlash)
 {
     $tmp = $lastSlash;
@@ -492,6 +506,7 @@ function getChunkURI($lastSlash)
     }
     return false;
 }
+
 function getUrl()
 {
     $base64 ="";
