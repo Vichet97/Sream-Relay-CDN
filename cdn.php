@@ -22,7 +22,7 @@
 
 error_reporting(E_ALL & ~E_WARNING);
 
-if( strpos($_SERVER["REQUEST_URI"], '.ts?') === false && time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( getParam('key') != false && strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ) )
+if( strpos($_SERVER["REQUEST_URI"], '.ts') === false && time() > @encrypt_decrypt('decrypt', getParam("authenticationtoken")) || ( getParam('key') != false && strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ) )
 {
     Show404Error();
 }
