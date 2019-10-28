@@ -1,7 +1,7 @@
 {
     "name": "composer/example",
     "require": {
-        "php": ">=7.0.0",
+        "php": "^7.0.0",
         "silex/silex": "^2.0.4",
         "monolog/monolog": "^1.22",
         "twig/twig": "^2.0",
@@ -9,6 +9,6 @@
         "symfony/twig-bridge": "^3"
     },
       "require-dev": {
-        "heroku/heroku-buildpack-php": "*"
+        "heroku/heroku-buildpack-php": "125"
     }
 }

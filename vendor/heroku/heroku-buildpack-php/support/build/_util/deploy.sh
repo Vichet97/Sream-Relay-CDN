@@ -28,13 +28,11 @@ done
 shift $((OPTIND-1))
 
 if [[ $# -lt 1 ]]; then
-	cat >&2 <<-EOF
-		Usage: $(basename $0) [--publish] FORMULA-VERSION [--overwrite]
-		  If --publish is given, mkrepo.sh will be invoked after a successful deploy to
-		  re-generate the repo. CAUTION: this will cause all manifests in the bucket to
-		  be included in the repo, including potentially currently unpublished ones.
-		  All additional arguments, including --overwrite, are passed through to 'bob'.
-	EOF
+	echo "Usage: $(basename $0) [--publish] FORMULA-VERSION [--overwrite]" >&2
+	echo "  If --publish is given, mkrepo.sh will be invoked after a successful deploy to" >&2
+	echo "  re-generate the repo. CAUTION: this will cause all manifests in the bucket to" >&2
+	echo "  be included in the repo, including potentially currently unpublished ones." >&2
+	echo " All additional arguments, including --overwrite, are passed through to 'bob'." >&2
 	exit 2
 fi
 

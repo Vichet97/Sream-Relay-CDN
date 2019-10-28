@@ -27,17 +27,15 @@ done
 shift $((OPTIND-1))
 
 if [[ $# -lt "1" ]]; then
-	cat >&2 <<-EOF
-		Usage: $(basename $0) [--no-publish] MANIFEST...
-		  MANIFEST: name of manifest file, e.g. 'ext-event-2.0.0_php-5.6.composer.json'
-		  If --no-publish is given, mkrepo.sh will NOT be invoked after removal to
-		  re-generate the repo.
-		  CAUTION: re-generating the repo will cause all manifests in the bucket
-		  to be included in the repo, including potentially currently unpublished ones.
-		  CAUTION: using --no-publish means the repo will point to non-existing packages
-		  until 'mkrepo.sh --upload' is run!
-		 Bucket name and prefix will be read from '\$S3_BUCKET' and '\$S3_PREFIX'.
-	EOF
+	echo "Usage: $(basename $0) [--no-publish] MANIFEST..." >&2
+	echo "  MANIFEST: name of manifest file, e.g. 'ext-event-2.0.0_php-5.6.composer.json'" >&2
+	echo "  If --no-publish is given, mkrepo.sh will NOT be invoked after removal to" >&2
+	echo "  re-generate the repo." >&2
+	echo "  CAUTION: re-generating the repo will cause all manifests in the bucket" >&2
+	echo "  to be included in the repo, including potentially currently unpublished ones." >&2
+	echo "  CAUTION: using --no-publish means the repo will point to non-existing packages" >&2
+	echo "  until 'mkrepo.sh --upload' is run!" >&2
+	echo " Bucket name and prefix will be read from '\$S3_BUCKET' and '\$S3_PREFIX'." >&2
 	exit 2
 fi
 
@@ -60,26 +58,22 @@ echo "-----> Fetching manifests..." >&2
 	s3cmd --ssl get "${manifests[@]}" 1>&2
 )
 
-cat >&2 <<-EOF
-	WARNING: POTENTIALLY DESTRUCTIVE ACTION!
-	
-	The following packages will be REMOVED
-	 from s3://${S3_BUCKET}/${S3_PREFIX}:
-	$(IFS=$'\n'; echo "${manifests[*]:-(none)}" | xargs -n1 basename | sed -e 's/^/  - /' -e 's/.composer.json$//')
-EOF
+echo "
+WARNING: POTENTIALLY DESTRUCTIVE ACTION!
+
+The following packages will be REMOVED
+ from s3://${S3_BUCKET}/${S3_PREFIX}:
+$(IFS=$'\n'; echo "${manifests[*]:-(none)}" | xargs -n1 basename | sed -e 's/^/  - /' -e 's/.composer.json$//')
+" >&2
 
 if $publish; then
-	cat >&2 <<-EOF
-		NOTICE: You have selected to publish the repo after removal of packages.
-		This means the repo will be re-generated based on the current bucket contents!
-	EOF
+	echo "NOTICE: You have selected to publish the repo after removal of packages." >&2
+	echo "This means the repo will be re-generated based on the current bucket contents!" >&2
 	regenmsg="& regenerate packages.json"
 else
 	regenmsg="without updating the repo"
-	cat >&2 <<-EOF
-		WARNING: You have selected to NOT publish the repo after removal of packages.
-		This means the repo will point to non-existing packages until mkrepo.sh is run!
-	EOF
+	echo "WARNING: You have selected to NOT publish the repo after removal of packages." >&2
+	echo "This means the repo will point to non-existing packages until mkrepo.sh is run!" >&2
 fi
 echo "" >&2
 
