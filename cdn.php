@@ -265,32 +265,33 @@ function checkPlaylist($playlist,$domainurl)
                 }
                 if(!preg_match("[h]",$item[0]) && !preg_match("[t]",$item[1])&&!preg_match("[t]",$item[2]) && !preg_match("[p]",$item[3]))
                 {
+                    $item = trim(preg_replace('/\s+/', ' ', $item));
+
                     if(preg_match("[\?]",$item) )
                     {
-                        $item = trim(preg_replace('/\s+/', ' ', $item))."&authenticationtoken=".getParam("authenticationtoken");
+                        $item = strpos($item, '.ts') !== false ? $item : $item."&authenticationtoken=".getParam("authenticationtoken");
                     }
                     else
                     {
-                        $item = trim(preg_replace('/\s+/', ' ', $item))."?authenticationtoken=".getParam("authenticationtoken");
-                    }
-                    if(getParam("p") != false)
-                    {
-                        $item = $item."&p=".getParam("p");
-                    }
-                    if(getParam("q") != false)
-                    {
-                        $item = $item."&q=".getParam("q");
-                    }
-                    if(getParam("key") != false)
-                    {
-                        $item = $item."&key=".getParam("key");
+                        $item = strpos($item, '.ts') !== false ? $item : $item."?authenticationtoken=".getParam("authenticationtoken");
                     }
 
-                    if (strpos($item, '.ts?authenticationtoken=') !== false) {
-                        $item = $item.explode('?authenticationtoken',$item)[0];
-                    } elseif (strpos($item, '.ts?') !== false) {
-                        $item = $item.explode('&authenticationtoken',$item)[0];
+                    if(getParam("p") != false)
+                    {
+                        $item = preg_match("[\?]",$item) ? $item."&p=".getParam("p") : $item."?p=".getParam("p");
                     }
+
+                    if(getParam("q") != false)
+                    {
+                        $item = preg_match("[\?]",$item) ? $item."&q=".getParam("q") : $item."?q=".getParam("q");
+                    }
+                    
+                    if(getParam("key") != false)
+                    {
+                        $item = preg_match("[\?]",$item) ? $item."&key=".getParam("key") : $item."?key=".getParam("key");
+                    }
+
+                    
 
                 } 
 
@@ -362,31 +363,30 @@ function checkPlaylist($playlist,$domainurl)
                     $item = $url.$item;
                     
                 }
+                $item = trim(preg_replace('/\s+/', ' ', $item));
+
                 if(preg_match("[\?]",$item) )
                 {
-                    $item = trim(preg_replace('/\s+/', ' ', $item))."&authenticationtoken=".getParam("authenticationtoken");
+                    $item = strpos($item, '.ts') !== false ? $item : $item."&authenticationtoken=".getParam("authenticationtoken");
                 }
                 else
                 {
-                    $item = trim(preg_replace('/\s+/', ' ', $item))."?authenticationtoken=".getParam("authenticationtoken");
-                }
-                if(getParam("p") != false)
-                {
-                    $item = $item."&p=".getParam("p");
-                }    
-                if(getParam("q") != false)
-                {
-                    $item = $item."&q=".getParam("q");
-                }
-                if(getParam("key") != false)
-                {
-                    $item = $item."&key=".getParam("key");
+                    $item = strpos($item, '.ts') !== false ? $item : $item."?authenticationtoken=".getParam("authenticationtoken");
                 }
 
-                if (strpos($item, '.ts?authenticationtoken=') !== false) {
-                    $item = $item.explode('?authenticationtoken',$item)[0];
-                } elseif (strpos($item, '.ts?') !== false) {
-                    $item = $item.explode('&authenticationtoken',$item)[0];
+                if(getParam("p") != false)
+                {
+                    $item = preg_match("[\?]",$item) ? $item."&p=".getParam("p") : $item."?p=".getParam("p");
+                }
+
+                if(getParam("q") != false)
+                {
+                    $item = preg_match("[\?]",$item) ? $item."&q=".getParam("q") : $item."?q=".getParam("q");
+                }
+                
+                if(getParam("key") != false)
+                {
+                    $item = preg_match("[\?]",$item) ? $item."&key=".getParam("key") : $item."?key=".getParam("key");
                 }
             }
             $data .= $item."\n";
