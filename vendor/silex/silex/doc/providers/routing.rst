@@ -7,8 +7,7 @@ named routes.
 Parameters
 ----------
 
-* **route_class**: (optional): The default route class used by the route
-  factory (defaults to ``Silex\Route``).
+None.
 
 Services
 --------

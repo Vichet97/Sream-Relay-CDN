@@ -35,7 +35,7 @@ class HttpCacheTestCase extends TestCase
      */
     protected $store;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->kernel = null;
 
@@ -53,7 +53,7 @@ class HttpCacheTestCase extends TestCase
         $this->clearDirectory(sys_get_temp_dir().'/http_cache');
     }
 
-    protected function tearDown(): void
+    protected function tearDown()
     {
         if ($this->cache) {
             $this->cache->getStore()->cleanup();
@@ -122,9 +122,7 @@ class HttpCacheTestCase extends TestCase
 
         $this->store = new Store(sys_get_temp_dir().'/http_cache');
 
-        if (!isset($this->cacheConfig['debug'])) {
-            $this->cacheConfig['debug'] = true;
-        }
+        $this->cacheConfig['debug'] = true;
 
         $this->esi = $esi ? new Esi() : null;
         $this->cache = new HttpCache($this->kernel, $this->store, $this->esi, $this->cacheConfig);

@@ -35,7 +35,7 @@ class ValidatorServiceProvider implements ServiceProviderInterface
         $app['validator.builder'] = function ($app) {
             $builder = Validation::createValidatorBuilder();
             $builder->setConstraintValidatorFactory($app['validator.validator_factory']);
-            $builder->setTranslationDomain($app['validator.translation_domain']);
+            $builder->setTranslationDomain('validators');
             $builder->addObjectInitializers($app['validator.object_initializers']);
             $builder->setMetadataFactory($app['validator.mapping.class_metadata_factory']);
             if (isset($app['translator'])) {
@@ -58,9 +58,5 @@ class ValidatorServiceProvider implements ServiceProviderInterface
         };
 
         $app['validator.validator_service_ids'] = [];
-
-        $app['validator.translation_domain'] = function () {
-            return 'validators';
-        };
     }
 }

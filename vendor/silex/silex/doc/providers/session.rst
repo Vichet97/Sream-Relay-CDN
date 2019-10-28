@@ -35,12 +35,6 @@ Parameters
 * **session.test**: Whether to simulate sessions or not (useful when writing
   functional tests).
 
-* **session.attribute_bag** (optional): The attribute bag service to use in the session.
-  Instance of ``AttributeBagInterface``.
-
-* **session.flash_bag** (optional): The flash bag service to use in the session.
-  Instance of ``FlashBagInterface``.
-
 Services
 --------
 

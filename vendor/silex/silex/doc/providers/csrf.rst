@@ -7,8 +7,7 @@ application with the Symfony Form component.
 Parameters
 ----------
 
-* **csrf.session_namespace** (optional): The namespace under which the token
-  is stored in the session. Defaults to ``_csrf``.
+* none
 
 Services
 --------

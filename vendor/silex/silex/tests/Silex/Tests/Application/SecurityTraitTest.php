@@ -17,6 +17,8 @@ use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
+ * SecurityTrait test cases.
+ *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 class SecurityTraitTest extends TestCase

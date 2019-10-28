@@ -40,14 +40,7 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
      *
      * The available options are:
      *
-     *   * debug                  If true, exceptions are thrown when things go wrong. Otherwise, the cache
-     *                            will try to carry on and deliver a meaningful response.
-     *
-     *   * trace_level            May be one of 'none', 'short' and 'full'. For 'short', a concise trace of the
-     *                            master request will be added as an HTTP header. 'full' will add traces for all
-     *                            requests (including ESI subrequests). (default: 'full' if in debug; 'none' otherwise)
-     *
-     *   * trace_header           Header name to use for traces. (default: X-Symfony-Cache)
+     *   * debug:                 If true, the traces are added as a HTTP header to ease debugging
      *
      *   * default_ttl            The number of seconds that a cache entry should be considered
      *                            fresh when no explicit freshness information is provided in
@@ -94,13 +87,7 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
             'allow_revalidate' => false,
             'stale_while_revalidate' => 2,
             'stale_if_error' => 60,
-            'trace_level' => 'none',
-            'trace_header' => 'X-Symfony-Cache',
         ], $options);
-
-        if (!isset($options['trace_level'])) {
-            $this->options['trace_level'] = $this->options['debug'] ? 'full' : 'none';
-        }
     }
 
     /**
@@ -121,23 +108,6 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
     public function getTraces()
     {
         return $this->traces;
-    }
-
-    private function addTraces(Response $response)
-    {
-        $traceString = null;
-
-        if ('full' === $this->options['trace_level']) {
-            $traceString = $this->getLog();
-        }
-
-        if ('short' === $this->options['trace_level'] && $masterId = array_key_first($this->traces)) {
-            $traceString = implode('/', $this->traces[$masterId]);
-        }
-
-        if (null !== $traceString) {
-            $response->headers->add([$this->options['trace_header'] => $traceString]);
-        }
     }
 
     /**
@@ -224,8 +194,8 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
 
         $this->restoreResponseBody($request, $response);
 
-        if (HttpKernelInterface::MASTER_REQUEST === $type) {
-            $this->addTraces($response);
+        if (HttpKernelInterface::MASTER_REQUEST === $type && $this->options['debug']) {
+            $response->headers->set('X-Symfony-Cache', $this->getLog());
         }
 
         if (null !== $this->surrogate) {
@@ -663,16 +633,21 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
 
     /**
      * Records that an event took place.
+     *
+     * @param Request $request A Request instance
+     * @param string  $event   The event name
      */
-    private function record(Request $request, string $event)
+    private function record(Request $request, $event)
     {
         $this->traces[$this->getTraceKey($request)][] = $event;
     }
 
     /**
      * Calculates the key we use in the "trace" array for a given request.
+     *
+     * @return string
      */
-    private function getTraceKey(Request $request): string
+    private function getTraceKey(Request $request)
     {
         $path = $request->getPathInfo();
         if ($qs = $request->getQueryString()) {
@@ -685,8 +660,10 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
     /**
      * Checks whether the given (cached) response may be served as "stale" when a revalidation
      * is currently in progress.
+     *
+     * @return bool true when the stale response may be served, false otherwise
      */
-    private function mayServeStaleWhileRevalidate(Response $entry): bool
+    private function mayServeStaleWhileRevalidate(Response $entry)
     {
         $timeout = $entry->headers->getCacheControlDirective('stale-while-revalidate');
 
@@ -699,8 +676,12 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
 
     /**
      * Waits for the store to release a locked entry.
+     *
+     * @param Request $request The request to wait for
+     *
+     * @return bool true if the lock was released before the internal timeout was hit; false if the wait timeout was exceeded
      */
-    private function waitForLock(Request $request): bool
+    private function waitForLock(Request $request)
     {
         $wait = 0;
         while ($this->store->isLocked($request) && $wait < 100) {
