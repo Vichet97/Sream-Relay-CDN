@@ -1,7 +1,7 @@
 {
     "name": "composer/example",
     "require": {
-        "php": ">=7.1.14",
+        "php": ">=7.0.0",
         "silex/silex": "^2.0.4",
         "monolog/monolog": "^1.22",
         "twig/twig": "^2.0",
