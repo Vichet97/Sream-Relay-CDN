@@ -1,5 +1,4 @@
 #!/bin/bash
-# Build Path: /app/.heroku/php/
 
 # fail hard
 set -o pipefail
@@ -23,8 +22,8 @@ dep_manifest=${dep_package}.composer.json
 needed=( libgmp-dev cmake )
 missing=$(comm -1 -3 <(dpkg-query -W -f '${package}\n' | sort) <(IFS=$'\n'; echo "${needed[*]}" | sort))
 if [[ "$missing" ]]; then
-    apt-get update -qq || { echo "Failed to 'apt-get update'. You must build this formula using Docker."; exit 1; }
-    apt-get install -q -y $missing
+	apt-get update -qq || { echo "Failed to 'apt-get update'. You must build this formula using Docker."; exit 1; }
+	apt-get install -q -y $missing
 fi
 
 echo "-----> Building ${dep_package}..."
@@ -34,7 +33,6 @@ pushd ${dep_dirname}
 cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_INSTALL_PREFIX:PATH=${OUT_PREFIX} -DCMAKE_BUILD_TYPE=RELEASE -DCASS_USE_ZLIB=ON -DCMAKE_INSTALL_LIBDIR:PATH=lib .
 make -s -j9
 make install -s
-rm ${OUT_PREFIX}/lib/libcassandra_static.a
 strip --strip-unneeded ${OUT_PREFIX}/lib/libcassandra*.so*
 popd
 

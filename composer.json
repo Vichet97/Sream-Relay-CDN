@@ -9,7 +9,7 @@
         "symfony/twig-bridge": "^3"
     },
       "require-dev": {
-        "heroku/heroku-buildpack-php": "125"
+        "heroku/heroku-buildpack-php": "*"
     },
     "config": {
         "preferred-install": "dist",

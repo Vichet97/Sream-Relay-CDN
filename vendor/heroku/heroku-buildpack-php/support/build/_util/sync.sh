@@ -38,14 +38,16 @@ done
 shift $((OPTIND-1))
 
 if [[ $# -lt "2" || $# -gt "6" ]]; then
-	echo "Usage: $(basename $0) [--no-remove] DEST_BUCKET DEST_PREFIX [DEST_REGION [SOURCE_BUCKET SOURCE_PREFIX [SOURCE_REGION]]]" >&2
-	echo "  DEST_BUCKET:   destination S3 bucket name." >&2
-	echo "  DEST_REGION:   destination bucket region, e.g. us-west-1; default: 's3'." >&2
-	echo "  DEST_PREFIX:   destination prefix, e.g. '' or 'dist-stable/'." >&2
-	echo "  SOURCE_BUCKET: source S3 bucket name; default: '\$S3_BUCKET'." >&2
-	echo "  SOURCE_REGION: source bucket region; default: '\$S3_REGION' or 's3'." >&2
-	echo "  SOURCE_PREFIX: source prefix; default: '\${S3_PREFIX}'." >&2
-	echo "  --no-remove: no removal of destination packages that are not in source bucket." >&2
+	cat >&2 <<-EOF
+		Usage: $(basename $0) [--no-remove] DEST_BUCKET DEST_PREFIX [DEST_REGION [SOURCE_BUCKET SOURCE_PREFIX [SOURCE_REGION]]]
+		  DEST_BUCKET:   destination S3 bucket name.
+		  DEST_REGION:   destination bucket region, e.g. us-west-1; default: 's3'.
+		  DEST_PREFIX:   destination prefix, e.g. '' or 'dist-stable/'.
+		  SOURCE_BUCKET: source S3 bucket name; default: '\$S3_BUCKET'.
+		  SOURCE_REGION: source bucket region; default: '\$S3_REGION' or 's3'.
+		  SOURCE_PREFIX: source prefix; default: '\${S3_PREFIX}'.
+		  --no-remove: no removal of destination packages that are not in source bucket.
+	EOF
 	exit 2
 fi
 
@@ -86,9 +88,11 @@ echo "" >&2
 
 # this mkrepo.sh call won't actually download, but use the given *.composer.json, and echo a generated packages.json
 # we use this to compare to the downloaded packages.json
-$here/mkrepo.sh $src_bucket $src_prefix ${src_tmp}/*.composer.json 2>/dev/null | python -c 'import sys, json; sys.exit(abs(cmp(json.load(open(sys.argv[1])), json.load(sys.stdin))))' ${src_tmp}/packages.json || {
-	echo "WARNING: packages.json from source does not match its list of manifests!" >&2
-	echo " You should run 'mkrepo.sh' to update, or ask the bucket maintainers to do so." >&2
+$here/mkrepo.sh $src_bucket $src_prefix ${src_tmp}/*.composer.json 2>/dev/null | python -c 'import sys, json; sys.exit(json.load(open(sys.argv[1])) != json.load(sys.stdin))' ${src_tmp}/packages.json || {
+	cat >&2 <<-EOF
+		WARNING: packages.json from source does not match its list of manifests!
+		 You should run 'mkrepo.sh' to update, or ask the bucket maintainers to do so.
+	EOF
 	read -p "Would you like to abort this operation? [Yn] " proceed
 	[[ ! $proceed =~ [nN]o* ]] && exit 1 # yes is the default so doing yes | sync.sh won't do something stupid
 }
@@ -123,12 +127,12 @@ for filename in $common; do
 		# same for times, but we'll look at them
 		try:
 		    src_time = datetime.datetime.strptime(src_manifest.pop("time"), "%Y-%m-%d %H:%M:%S") # UTC
-		except KeyError, ValueError:
+		except (KeyError, ValueError):
 		    src_time = datetime.datetime.utcfromtimestamp(os.path.getmtime(sys.argv[1]))
 		    stderrprint("WARNING: source manifest {} has invalid time entry, using mtime: {}".format(os.path.basename(sys.argv[1]), src_time.isoformat()))
 		try:
 		    dst_time = datetime.datetime.strptime(dst_manifest.pop("time"), "%Y-%m-%d %H:%M:%S") # UTC
-		except KeyError, ValueError:
+		except (KeyError, ValueError):
 		    dst_time = datetime.datetime.utcfromtimestamp(os.path.getmtime(sys.argv[2]))
 		    stderrprint("WARNING: destination manifest {} has invalid time entry, using mtime: {}".format(os.path.basename(sys.argv[2]), dst_time.isoformat()))
 		# a newer source time means we will copy
@@ -140,7 +144,7 @@ for filename in $common; do
 		    # 5 = content identical, src_time < dst_time (probably needs sync the other way)
 		    # 7 = content different, src_time < dst_time (probably needs sync the other way)
 		    ret = 1
-		    ret = ret | abs(cmp(src_manifest, dst_manifest))<<1
+		    ret = ret | (src_manifest != dst_manifest)<<1
 		    ret = ret | (src_time < dst_time)<<2
 		    sys.exit(ret)
 		PYTHON
@@ -162,26 +166,26 @@ for filename in $common; do
 	fi
 done
 
-echo "
-WARNING: POTENTIALLY DESTRUCTIVE ACTION!
+cat >&2 <<-EOF
+	WARNING: POTENTIALLY DESTRUCTIVE ACTION!
 
-The following packages will be IGNORED:
-$(IFS=$'\n'; echo "${ignore_manifests[*]:-(none)}" | sed -e 's/^/  - /' -e 's/.composer.json//')
+	The following packages will be IGNORED:
+	$(IFS=$'\n'; echo "${ignore_manifests[*]:-(none)}" | sed -e 's/^/  - /' -e 's/.composer.json//')
 
-The following packages will be ADDED
- from s3://${src_bucket}/${src_prefix}
-   to s3://${dst_bucket}/${dst_prefix}:
-$(echo "${add_manifests:-(none)}" | sed -e 's/^/  - /' -e 's/.composer.json$//')
+	The following packages will be ADDED
+	 from s3://${src_bucket}/${src_prefix}
+	   to s3://${dst_bucket}/${dst_prefix}:
+	$(echo "${add_manifests:-(none)}" | sed -e 's/^/  - /' -e 's/.composer.json$//')
 
-The following packages will be UPDATED (source manifest is newer)
- from s3://${src_bucket}/${src_prefix}
-   to s3://${dst_bucket}/${dst_prefix}:
-$(IFS=$'\n'; echo "${update_manifests[*]:-(none)}" | sed -e 's/^/  - /' -e 's/.composer.json$//')
+	The following packages will be UPDATED (source manifest is newer)
+	 from s3://${src_bucket}/${src_prefix}
+	   to s3://${dst_bucket}/${dst_prefix}:
+	$(IFS=$'\n'; echo "${update_manifests[*]:-(none)}" | sed -e 's/^/  - /' -e 's/.composer.json$//')
 
-The following packages will $($remove || echo -n "NOT ")be REMOVED
- from s3://${dst_bucket}/${dst_prefix}$($remove && echo -n ":")$($remove || echo -ne "\n because '--no-remove' was given:")
-$(echo "${remove_manifests:-(none)}" | sed -e 's/^/  - /' -e 's/.composer.json$//')
-" >&2
+	The following packages will $($remove || echo -n "NOT ")be REMOVED
+	 from s3://${dst_bucket}/${dst_prefix}$($remove && echo -n ":")$($remove || echo -ne "\n because '--no-remove' was given:")
+	$(echo "${remove_manifests:-(none)}" | sed -e 's/^/  - /' -e 's/.composer.json$//')
+EOF
 
 # clear remove_manifests if --no-remove given
 $remove || remove_manifests=
