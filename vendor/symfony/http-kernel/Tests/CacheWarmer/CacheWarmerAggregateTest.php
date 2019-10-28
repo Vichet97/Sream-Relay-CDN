@@ -18,12 +18,12 @@ class CacheWarmerAggregateTest extends TestCase
 {
     protected static $cacheDir;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
-        self::$cacheDir = tempnam(sys_get_temp_dir(), 'sf2_cache_warmer_dir');
+        self::$cacheDir = tempnam(sys_get_temp_dir(), 'sf_cache_warmer_dir');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         @unlink(self::$cacheDir);
     }
@@ -35,34 +35,6 @@ class CacheWarmerAggregateTest extends TestCase
             ->expects($this->once())
             ->method('warmUp');
         $aggregate = new CacheWarmerAggregate([$warmer]);
-        $aggregate->warmUp(self::$cacheDir);
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testInjectWarmersUsingAdd()
-    {
-        $warmer = $this->getCacheWarmerMock();
-        $warmer
-            ->expects($this->once())
-            ->method('warmUp');
-        $aggregate = new CacheWarmerAggregate();
-        $aggregate->add($warmer);
-        $aggregate->warmUp(self::$cacheDir);
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testInjectWarmersUsingSetWarmers()
-    {
-        $warmer = $this->getCacheWarmerMock();
-        $warmer
-            ->expects($this->once())
-            ->method('warmUp');
-        $aggregate = new CacheWarmerAggregate();
-        $aggregate->setWarmers([$warmer]);
         $aggregate->warmUp(self::$cacheDir);
     }
 

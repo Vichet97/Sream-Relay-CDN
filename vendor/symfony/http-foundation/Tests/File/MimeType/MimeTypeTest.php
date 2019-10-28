@@ -17,11 +17,10 @@ use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 
 /**
  * @requires extension fileinfo
+ * @group legacy
  */
 class MimeTypeTest extends TestCase
 {
-    protected $path;
-
     public function testGuessImageWithoutExtension()
     {
         $this->assertEquals('image/gif', MimeTypeGuesser::getInstance()->guess(__DIR__.'/../Fixtures/test'));
@@ -79,7 +78,7 @@ class MimeTypeTest extends TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $path = __DIR__.'/../Fixtures/to_delete';
         if (file_exists($path)) {

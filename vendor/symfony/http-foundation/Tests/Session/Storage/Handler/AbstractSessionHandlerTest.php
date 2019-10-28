@@ -13,14 +13,11 @@ namespace Symfony\Component\HttpFoundation\Tests\Session\Storage\Handler;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @requires PHP 7.0
- */
 class AbstractSessionHandlerTest extends TestCase
 {
     private static $server;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $spec = [
             1 => ['file', '/dev/null', 'w'],
@@ -32,7 +29,7 @@ class AbstractSessionHandlerTest extends TestCase
         sleep(1);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (self::$server) {
             proc_terminate(self::$server);
