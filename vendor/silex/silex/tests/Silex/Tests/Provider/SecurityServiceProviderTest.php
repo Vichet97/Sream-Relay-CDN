@@ -17,7 +17,6 @@ use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\HttpKernel\Client;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -182,13 +181,6 @@ class SecurityServiceProviderTest extends WebTestCase
         $client->request('post', '/login_check', ['_username' => 'unknown', '_password' => 'bar']);
         $this->assertEquals('Username "unknown" does not exist.', $app['security.last_error']($client->getRequest()));
         $client->getRequest()->getSession()->save();
-
-        $client->request('post', '/login_check', ['_username' => 'unknown', '_password' => 'bar']);
-        $app['request_stack']->push($client->getRequest());
-        $authenticationException = $app['security.authentication_utils']->getLastAuthenticationError();
-        $this->assertInstanceOf(AuthenticationException::class, $authenticationException);
-        $this->assertEquals('Username "unknown" does not exist.', $authenticationException->getMessage());
-        $client->getRequest()->getSession()->save();
     }
 
     public function testFakeRoutesAreSerializable()
@@ -278,36 +270,6 @@ class SecurityServiceProviderTest extends WebTestCase
         $request = Request::create('/');
         $app->handle($request);
         $this->assertNull($app['user']);
-
-        $request->headers->set('PHP_AUTH_USER', 'fabien');
-        $request->headers->set('PHP_AUTH_PW', 'foo');
-        $app->handle($request);
-        $this->assertInstanceOf('Symfony\Component\Security\Core\User\UserInterface', $app['user']);
-        $this->assertEquals('fabien', $app['user']->getUsername());
-    }
-
-    public function testUserAsServiceString()
-    {
-        $users = [
-            'fabien' => ['ROLE_ADMIN', '$2y$15$lzUNsTegNXvZW3qtfucV0erYBcEqWVeyOmjolB7R1uodsAVJ95vvu'],
-        ];
-
-        $app = new Application();
-        $app->register(new SecurityServiceProvider(), [
-            'security.firewalls' => [
-                'default' => [
-                    'http' => true,
-                    'users' => 'my_user_provider',
-                ],
-            ],
-        ]);
-        $app['my_user_provider'] = $app['security.user_provider.inmemory._proto']($users);
-        $app->get('/', function () { return 'foo'; });
-
-        $request = Request::create('/');
-        $app->handle($request);
-        $this->assertNull($app['user']);
-        $this->assertSame($app['my_user_provider'], $app['security.user_provider.default']);
 
         $request->headers->set('PHP_AUTH_USER', 'fabien');
         $request->headers->set('PHP_AUTH_PW', 'foo');

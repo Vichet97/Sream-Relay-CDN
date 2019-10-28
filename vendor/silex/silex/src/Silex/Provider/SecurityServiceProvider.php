@@ -31,7 +31,6 @@ use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationPro
 use Symfony\Component\Security\Core\Authentication\Provider\AnonymousAuthenticationProvider;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolver;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessHandler;
 use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
@@ -230,19 +229,13 @@ class SecurityServiceProvider implements ServiceProviderInterface, EventListener
                 $protected = false === $security ? false : count($firewall);
                 $listeners = ['security.channel_listener'];
 
-                if (is_string($users)) {
-                    $users = function () use ($app, $users) {
-                        return $app[$users];
-                    };
-                }
-
                 if ($protected) {
-                    if (!isset($app['security.context_listener.'.$context])) {
+                    if (!isset($app['security.context_listener.'.$name])) {
                         if (!isset($app['security.user_provider.'.$name])) {
                             $app['security.user_provider.'.$name] = is_array($users) ? $app['security.user_provider.inmemory._proto']($users) : $users;
                         }
 
-                        $app['security.context_listener.'.$context] = $app['security.context_listener._proto']($name, [$app['security.user_provider.'.$name]]);
+                        $app['security.context_listener.'.$name] = $app['security.context_listener._proto']($name, [$app['security.user_provider.'.$name]]);
                     }
 
                     if (false === $stateless) {
@@ -672,10 +665,6 @@ class SecurityServiceProvider implements ServiceProviderInterface, EventListener
                 return new AnonymousAuthenticationProvider($name);
             };
         });
-
-        $app['security.authentication_utils'] = function ($app) {
-            return new AuthenticationUtils($app['request_stack']);
-        };
     }
 
     public function subscribe(Container $app, EventDispatcherInterface $dispatcher)

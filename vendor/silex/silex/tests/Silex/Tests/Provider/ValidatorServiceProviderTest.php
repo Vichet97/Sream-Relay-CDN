@@ -20,6 +20,7 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Silex\Tests\Provider\ValidatorServiceProviderTest\Constraint\Custom;
 use Silex\Tests\Provider\ValidatorServiceProviderTest\Constraint\CustomValidator;
+use Symfony\Component\Validator\ValidatorInterface as LegacyValidatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -34,6 +35,8 @@ class ValidatorServiceProviderTest extends TestCase
         $app = new Application();
         $app->register(new ValidatorServiceProvider());
         $app->register(new FormServiceProvider());
+
+        $this->assertInstanceOf('Symfony\Component\Validator\Validator\ValidatorInterface', $app['validator']);
 
         return $app;
     }
@@ -51,6 +54,8 @@ class ValidatorServiceProviderTest extends TestCase
                 'test.custom.validator' => 'custom.validator',
             ],
         ]);
+
+        $this->assertInstanceOf('Symfony\Component\Validator\Validator\ValidatorInterface', $app['validator']);
 
         return $app;
     }
@@ -81,7 +86,7 @@ class ValidatorServiceProviderTest extends TestCase
      */
     public function testValidatorServiceIsAValidator($app)
     {
-        $this->assertTrue($app['validator'] instanceof ValidatorInterface);
+        $this->assertTrue($app['validator'] instanceof ValidatorInterface || $app['validator'] instanceof LegacyValidatorInterface);
     }
 
     /**
@@ -155,7 +160,7 @@ class ValidatorServiceProviderTest extends TestCase
 
         $app->register(new ValidatorServiceProvider());
         $app->register(new TranslationServiceProvider());
-        $app->extend('translator', function ($translator, $app) {
+        $app['translator'] = $app->extend('translator', function ($translator, $app) {
             $translator->addResource('array', ['This value should not be blank.' => 'Pas vide'], 'fr', 'validators');
 
             return $translator;

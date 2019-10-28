@@ -69,6 +69,7 @@ class SessionServiceProvider implements ServiceProviderInterface, EventListenerP
         };
 
         $app['session.storage.options'] = [];
+        $app['session.default_locale'] = 'en';
         $app['session.storage.save_path'] = null;
         $app['session.attribute_bag'] = null;
         $app['session.flash_bag'] = null;
@@ -79,7 +80,7 @@ class SessionServiceProvider implements ServiceProviderInterface, EventListenerP
         $dispatcher->addSubscriber($app['session.listener']);
 
         if ($app['session.test']) {
-            $dispatcher->addSubscriber($app['session.listener.test']);
+            $app['dispatcher']->addSubscriber($app['session.listener.test']);
         }
     }
 }
