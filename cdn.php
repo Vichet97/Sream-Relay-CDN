@@ -565,7 +565,7 @@ function getUrl()
 
     
     $url = $temp;
-    
+    echo $url;exit;
     if( !preg_match("[ts\?authenticationtoken]",$old)  && preg_match("[\.m3u8|\.ts]",$_SERVER["REQUEST_URI"]) && !preg_match("[playlist.m3u8]",$_SERVER["REQUEST_URI"]))
     {
         $lastSlash = substr($url, strrpos($url, '/') + 1);
@@ -621,7 +621,7 @@ $id = preg_replace('#\?[^?]*$#', '', $id);
 $cdn = getParam("cache");
 $type = "";
 $length = 0;
-echo $url;exit;
+
 if(getParam('p')!=false)
 {
     $proxy = rawurldecode(encrypt_decrypt('decrypt',getParam("p")));
