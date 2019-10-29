@@ -525,10 +525,10 @@ function getUrl()
     {
         $script = basename(__FILE__);
     }
-    
+    echo $script;exit;
     $temp = explode("/", explode($script,curPageURL())[1])[1];
     $temp = str_replace("iduri=","",$temp);
-    echo $temp;exit;
+    
     if(preg_match("[\?]",$temp[0]) )
     {
         $temp = substr($temp, 1);
