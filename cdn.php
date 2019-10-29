@@ -496,12 +496,11 @@ function encrypt_decrypt($action, $string)
 
 function getChunkURI()
 {
-    $temp = explode("/", $_SERVER['REQUEST_URI'], 3)[2];
-    
+    $temp = explode("/", explode("iduri=", $_SERVER['REQUEST_URI'])[1], 2)[1] ;
     if(!preg_match("[playlist.m3u8]",$_SERVER['REQUEST_URI']))
     {
         $tmp = substr($temp, strrpos($temp, '/') + 1);
-        echo $tmp;exit;
+        
         $script=str_replace(".php","",basename(__FILE__));
         if(preg_match("[\.php]",$_SERVER["REQUEST_URI"]))
         {
