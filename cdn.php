@@ -497,7 +497,7 @@ function encrypt_decrypt($action, $string)
 function getChunkURI()
 {
     $temp = explode("/", $_SERVER['REQUEST_URI'], 3)[2];
-
+    echo $temp;exit;
     if(!preg_match("[playlist.m3u8]",$_SERVER['REQUEST_URI']))
     {
         $tmp = substr($temp, strrpos($temp, '/') + 1);
@@ -571,7 +571,7 @@ function getUrl()
         $lastSlash = substr($url, strrpos($url, '/') + 1);
         
         $chunk = getChunkURI();
-        echo $chunk;exit;
+        
         // if(preg_match("[\?]",$lastSlash)&& preg_match("[\?]",$chunk))
         // {
         //     $url = str_replace($lastSlash,$chunk,$url);
