@@ -500,9 +500,9 @@ function getChunkURI()
     
     if(!preg_match("[playlist.m3u8]",$_SERVER['REQUEST_URI']))
     {
-        echo $temp; exit;
-        $tmp = substr($temp, strrpos($temp, '/') + 1);
         
+        $tmp = substr($temp, strrpos($temp, '/') + 1);
+        echo $tmp; exit;
         $script=str_replace(".php","",basename(__FILE__));
         if(preg_match("[\.php]",$_SERVER["REQUEST_URI"]))
         {
