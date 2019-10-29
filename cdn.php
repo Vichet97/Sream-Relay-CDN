@@ -528,7 +528,7 @@ function getUrl()
     
     $temp = explode("/", explode($script,curPageURL())[1])[1];
     $temp = str_replace("iduri=","",$temp);
-    
+    echo $temp;exit;
     if(preg_match("[\?]",$temp[0]) )
     {
         $temp = substr($temp, 1);
@@ -623,7 +623,7 @@ $id = preg_replace('#\?[^?]*$#', '', $id);
 $cdn = getParam("cache");
 $type = "";
 $length = 0;
-echo $url;exit;
+
 if(getParam('p')!=false)
 {
     $proxy = rawurldecode(encrypt_decrypt('decrypt',getParam("p")));
