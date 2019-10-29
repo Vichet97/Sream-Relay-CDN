@@ -526,7 +526,7 @@ function getUrl()
         $script = basename(__FILE__);
     }
     
-    $temp = explode("/",explode("iduri=", explode($script,curPageURL()))[1])[0];
+    $temp = explode("/",explode("iduri=", curPageURL())[1])[0];
     echo $temp;exit;
     if(preg_match("[\?]",$temp[0]) )
     {
