@@ -621,7 +621,7 @@ $id = preg_replace('#\?[^?]*$#', '', $id);
 $cdn = getParam("cache");
 $type = "";
 $length = 0;
-
+echo $url;exit;
 if(getParam('p')!=false)
 {
     $proxy = rawurldecode(encrypt_decrypt('decrypt',getParam("p")));
