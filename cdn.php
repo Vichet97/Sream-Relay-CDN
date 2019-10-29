@@ -497,6 +497,7 @@ function encrypt_decrypt($action, $string)
 function getChunkURI()
 {
     $temp = explode("/", explode("iduri=", $_SERVER['REQUEST_URI'])[1], 2)[1] ;
+    echo $temp; exit;
     if(!preg_match("[playlist.m3u8]",$_SERVER['REQUEST_URI']))
     {
         $tmp = substr($temp, strrpos($temp, '/') + 1);
@@ -624,7 +625,7 @@ $id = preg_replace('#\?[^?]*$#', '', $id);
 $cdn = getParam("cache");
 $type = "";
 $length = 0;
-echo $url; exit;
+
 if(getParam('p')!=false)
 {
     $proxy = rawurldecode(encrypt_decrypt('decrypt',getParam("p")));
