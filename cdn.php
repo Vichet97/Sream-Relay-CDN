@@ -497,7 +497,7 @@ function encrypt_decrypt($action, $string)
 function getChunkURI()
 {
     $temp = explode("/", $_SERVER['REQUEST_URI'], 3)[2];
-    echo $temp;exit;
+    
     if(!preg_match("[playlist.m3u8]",$_SERVER['REQUEST_URI']))
     {
         $tmp = substr($temp, strrpos($temp, '/') + 1);
@@ -515,6 +515,7 @@ function getChunkURI()
         $tmp = explode("authenticationtoken=", $tmp)[0];
         return $tmp;
     }
+    echo $temp;exit;
     return false;
 }
 
