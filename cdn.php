@@ -527,7 +527,6 @@ function getUrl()
     }
     
     $temp = explode("/",explode("iduri=", curPageURL())[1])[0];
-    echo $temp;exit;
     if(preg_match("[\?]",$temp[0]) )
     {
         $temp = substr($temp, 1);
