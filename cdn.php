@@ -502,7 +502,7 @@ function getChunkURI()
     {
         
         $tmp = substr($temp, strrpos($temp, '/') + 1);
-        echo $tmp; exit;
+        
         $script=str_replace(".php","",basename(__FILE__));
         if(preg_match("[\.php]",$_SERVER["REQUEST_URI"]))
         {
@@ -514,6 +514,7 @@ function getChunkURI()
         $tmp = str_replace("?authenticationtoken=","authenticationtoken=",$tmp);
         $tmp = str_replace("&authenticationtoken=","authenticationtoken=",$tmp);
         $tmp = explode("authenticationtoken=", $tmp)[0];
+        echo $tmp; exit;
         return $tmp;
     }
     
