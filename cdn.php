@@ -509,12 +509,12 @@ function getChunkURI()
             $script = basename(__FILE__);
         }
         $ts = explode("/", explode($script,curPageURL())[1])[1];
-        
+        echo $ts; exit;
         $tmp = substr(explode($ts, curPageURL())[1], 1);
         $tmp = str_replace("?authenticationtoken=","authenticationtoken=",$tmp);
         $tmp = str_replace("&authenticationtoken=","authenticationtoken=",$tmp);
         $tmp = explode("authenticationtoken=", $tmp)[0];
-        echo $tmp; exit;
+        
         return $tmp;
     }
     
