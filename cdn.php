@@ -494,11 +494,22 @@ function encrypt_decrypt($action, $string)
   return $output;
 }
 
-function getChunkURI($lastSlash)
+function getChunkURI()
 {
-    $tmp = $lastSlash;
+    $temp = explode("/", $_SERVER['REQUEST_URI'], 3)[2];
+
     if(!preg_match("[playlist.m3u8]",$_SERVER['REQUEST_URI']))
     {
+        $tmp = substr($temp, strrpos($temp, '/') + 1);
+
+        $script=str_replace(".php","",basename(__FILE__));
+        if(preg_match("[\.php]",$_SERVER["REQUEST_URI"]))
+        {
+            $script = basename(__FILE__);
+        }
+        $ts = explode("/", explode($script,curPageURL())[1])[1];
+        
+        $tmp = substr(explode($ts, curPageURL())[1], 1);
         $tmp = str_replace("?authenticationtoken=","authenticationtoken=",$tmp);
         $tmp = str_replace("&authenticationtoken=","authenticationtoken=",$tmp);
         $tmp = explode("authenticationtoken=", $tmp)[0];
@@ -509,34 +520,58 @@ function getChunkURI($lastSlash)
 
 function getUrl()
 {
-    $base64 ="";
-    $temp = explode("iduri=", $_SERVER["REQUEST_URI"])[1];
-    if(!preg_match("[://]",$temp))
+    $script=str_replace(".php","",basename(__FILE__));
+    if(preg_match("[\.php]",$_SERVER["REQUEST_URI"]))
     {
-        if(isset(explode("/", $temp)[1]))
-        {
-            $chunk = explode("/", $temp)[1];
-        }
-        $temp = explode("/", $temp)[0];
-        try{
-            $base64 = encrypt_decrypt('decrypt',rawurldecode("$temp"));
-            if(preg_match("[http|https]",$base64))
-            {   
-                $lastSlash = "/".substr($temp, strrpos($temp, '/') + 1);
-                $base64 = str_replace("$lastSlash","",$temp) ;
-                $temp = encrypt_decrypt('decrypt',rawurldecode("$base64"));
-            }
-        }
-        catch(Exception $e){
-            $base64 ="";
-        }
+        $script = basename(__FILE__);
+    }
+    
+    $temp = explode("/", explode($script,curPageURL())[1])[1];
+    $temp = str_replace("iduri=","",$temp);
+    
+    if(preg_match("[\?]",$temp[0]) )
+    {
+        $temp = substr($temp, 1);
+    }
+    $old = $temp;
+    
+    if(isParam())
+    {
+        $temp = explode("id=", $_SERVER["REQUEST_URI"])[1];
     }
 
+    if(preg_match("[ts\?authenticationtoken]",$temp))
+    {
+        $temp = explode(".ts", $temp)[0];
+    }
+
+    if(preg_match("[\?authenticationtoken]",$temp))
+    {
+        $temp = explode("?authenticationtoken", $temp)[0];
+    }
+    
+    $base64 ="";
+
+    try{
+        $base64 = encrypt_decrypt('decrypt',rawurldecode("$temp"));
+        if(preg_match("[http|https]",$base64))
+        {   
+            $lastSlash = "/".substr($temp, strrpos($temp, '/') + 1);
+            $base64 = str_replace("$lastSlash","",$temp) ;
+            $temp = encrypt_decrypt('decrypt',rawurldecode("$base64"));
+        }
+    }
+    catch(Exception $e){
+        $base64 ="";
+    }
+
+    
     $url = $temp;
-    if( $base64 != false  && preg_match("[\.m3u8|\.ts]",$_SERVER["REQUEST_URI"]) && !preg_match("[playlist.m3u8]",$_SERVER["REQUEST_URI"]))
+    
+    if( !preg_match("[ts\?authenticationtoken]",$old)  && preg_match("[\.m3u8|\.ts]",$_SERVER["REQUEST_URI"]) && !preg_match("[playlist.m3u8]",$_SERVER["REQUEST_URI"]))
     {
         $lastSlash = substr($url, strrpos($url, '/') + 1);
-        $chunk = getChunkURI($chunk);
+        $chunk = getChunkURI();
         // if(preg_match("[\?]",$lastSlash)&& preg_match("[\?]",$chunk))
         // {
         //     $url = str_replace($lastSlash,$chunk,$url);
@@ -549,8 +584,10 @@ function getUrl()
         // {
         //     $url = str_replace($lastSlash,$chunk,$url);
         // }
+
         $url = str_replace($lastSlash,$chunk,$url);
-    }    
+        
+    }   
     return $url;
 }
 
