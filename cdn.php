@@ -568,8 +568,8 @@ function getUrl()
     
     if( !preg_match("[ts\?authenticationtoken]",$old)  && preg_match("[\.m3u8|\.ts]",$_SERVER["REQUEST_URI"]) && !preg_match("[playlist.m3u8]",$_SERVER["REQUEST_URI"]))
     {
-        echo "dddd";
         $lastSlash = substr($url, strrpos($url, '/') + 1);
+        echo $lastSlash;exit;
         $chunk = getChunkURI();
         // if(preg_match("[\?]",$lastSlash)&& preg_match("[\?]",$chunk))
         // {
@@ -587,7 +587,7 @@ function getUrl()
         $url = str_replace($lastSlash,$chunk,$url);
         
     }   
-    echo $url;exit;
+    
     return $url;
 }
 
