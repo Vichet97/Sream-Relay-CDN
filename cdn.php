@@ -513,8 +513,6 @@ function getChunkURI()
         $tmp = str_replace("?authenticationtoken=","authenticationtoken=",$tmp);
         $tmp = str_replace("&authenticationtoken=","authenticationtoken=",$tmp);
         $tmp = explode("authenticationtoken=", $tmp)[0];
-                echo $tmp; exit;
-
         return $tmp;
     }
     
