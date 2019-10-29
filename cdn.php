@@ -501,7 +501,7 @@ function getChunkURI()
     if(!preg_match("[playlist.m3u8]",$_SERVER['REQUEST_URI']))
     {
         $tmp = substr($temp, strrpos($temp, '/') + 1);
-
+        echo $tmp;exit;
         $script=str_replace(".php","",basename(__FILE__));
         if(preg_match("[\.php]",$_SERVER["REQUEST_URI"]))
         {
@@ -515,7 +515,7 @@ function getChunkURI()
         $tmp = explode("authenticationtoken=", $tmp)[0];
         return $tmp;
     }
-    echo $temp;exit;
+    
     return false;
 }
 
