@@ -686,7 +686,7 @@ elseif(preg_match("[\.ts]",$url))
     header("Content-Type: $type");
     $old = $url;
 
-    $url = "https://d2dbd9ow79oetv.cloudfront.net/$url";
+    $url = "https://example.com/$url";
     if(getParam("p")=="tree")
     {
         header("Location: $url",true, 302);
@@ -705,8 +705,8 @@ elseif(preg_match("[\.ts]",$url))
     {
         $suffix = strlen(@encrypt_decrypt('decrypt', getParam("key"))) < 5 ? "" : "?key=".@stream_encrypt_decrypt('encrypt', encrypt_decrypt('decrypt', getParam("key")));
         $stream = substr( str_replace(' ', '', $old) , 0, 4 ) === "http" ? explode('://', $old, 2)[1] : $old;
-        $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://as.mykhcdn.workers.dev/cdn/:uri
-        $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream)).$suffix;   // https://as.mykhcdn.workers.dev/cdn/:encoded_uri
+        $proxy = encrypt_decrypt('decrypt',getParam("p")) ;   //https://example.com/cdn/:uri
+        $url = $proxy.stream_encrypt_decrypt('encrypt',rawurldecode($stream)).$suffix;   // https://example.com/cdn/:encoded_uri
         header("Location: $url",true, 302);
     }
     else
@@ -727,7 +727,7 @@ elseif(preg_match("[\.ts]",$url))
         else
         {
             $url = urlencode(str_replace("=","",base64_encode(rawurldecode("$url")))) ;
-            $url = "https://d2dbd9ow79oetv.cloudfront.net/proxy.maintenis.com/index.php?q=$url&hl=8";//2e9, e9, e0
+            $url = "https://example.com/proxy.maintenis.com/index.php?q=$url&hl=8";//2e9, e9, e0
             header("Location: $url",true, 302);
         }
     }
@@ -947,7 +947,7 @@ else
 
                 $url = $url.$id;
                 $old = $url;
-                $url = "https://d2dbd9ow79oetv.cloudfront.net/$url";
+                $url = "https://example.com/$url";
 
 
                 if(getParam("p")=="tree")
@@ -990,7 +990,7 @@ else
                     else
                     {
                         $url = urlencode(str_replace("=","",base64_encode(rawurldecode("$url")))) ;
-                        $url = "https://d2dbd9ow79oetv.cloudfront.net/proxy.maintenis.com/index.php?q=$url&hl=8";//2e9, e9, e0
+                        $url = "https://example.com/proxy.maintenis.com/index.php?q=$url&hl=8";//2e9, e9, e0
                         header("Location: $url",true, 302);
                     }
                 }
