@@ -34,7 +34,7 @@ function stream_encrypt_decrypt($action, $string)
     date_default_timezone_set('UTC');
     $textToEncrypt = $string;
     $encryptionMethod = "AES-256-CBC";
-    $secret = "im72charPasswordofdInitVectorStm"; //must be 32 char length
+    $secret = "im72charbhnghjuiyfdInitdfjuikojh"; //must be 32 char length
     $iv = substr($secret, 0, 16);
 
 
@@ -68,7 +68,7 @@ function encrypt_decrypt($action, $string)
     date_default_timezone_set('UTC');
     $textToEncrypt = $string;
     $encryptionMethod = "AES-256-CBC";
-    $secret = "im72charPasswordofdInitVectorStm"; //must be 32 char length
+    $secret = "im72charbhnghjuiyfdInitdfjuikojh"; //must be 32 char length
     $iv = substr($secret, 0, 16);
 
 
